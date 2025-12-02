@@ -37,8 +37,12 @@ public class calculator {
                 System.out.println("Result="+result);
                 break;
             case 4:
+                if(b>0){
                 result=a/b;
-                System.out.println("Result="+result);
+                System.out.println("Result="+result);}
+                else{
+                    System.out.println("enter apositive b value")
+                }
                 break;
             case 5:
                 result=a%b;
