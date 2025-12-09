@@ -12,13 +12,15 @@ import com.google.gson.JsonObject;
 
 public class WeatherAI_GUI extends JFrame {
 
-    private static final String API_KEY = "026f9e71bbd20786da6bcdc7329d256c";  // your key
+    // ------------------- PRIVATE ENCAPSULATED FIELDS -------------------
+    private static final String API_KEY = "026f9e71bbd20786da6bcdc7329d256c";
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final Gson gson = new Gson();
 
-    JTextField cityField;
-    JTextArea outputArea;
+    private JTextField cityField;
+    private JTextArea outputArea;
 
+    // ------------------- PUBLIC CONSTRUCTOR (UI only) -------------------
     public WeatherAI_GUI() {
 
         setTitle("AI Weather-Based Clothes Recommendation");
@@ -27,7 +29,6 @@ public class WeatherAI_GUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // ---------- TOP PANEL ----------
         JPanel topPanel = new JPanel(new FlowLayout());
         JLabel cityLabel = new JLabel("Enter City:");
         cityField = new JTextField(20);
@@ -40,7 +41,6 @@ public class WeatherAI_GUI extends JFrame {
         topPanel.add(fetchButton);
         add(topPanel, BorderLayout.NORTH);
 
-        // ---------- OUTPUT AREA ----------
         outputArea = new JTextArea();
         outputArea.setEditable(false);
         outputArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
@@ -49,7 +49,8 @@ public class WeatherAI_GUI extends JFrame {
         setVisible(true);
     }
 
-    // FREE API → Get current weather
+    // ------------------- PRIVATE METHODS (Fully Encapsulated) -------------------
+
     private JsonObject getCurrentWeather(String city) throws Exception {
 
         String url = "https://api.openweathermap.org/data/2.5/weather?q="
@@ -62,7 +63,6 @@ public class WeatherAI_GUI extends JFrame {
         return gson.fromJson(res.body(), JsonObject.class);
     }
 
-    // FREE API → 3-hour forecast → gives POP (rain probability)
     private JsonObject getForecast(String city) throws Exception {
 
         String url = "https://api.openweathermap.org/data/2.5/forecast?q="
@@ -75,7 +75,6 @@ public class WeatherAI_GUI extends JFrame {
         return gson.fromJson(res.body(), JsonObject.class);
     }
 
-    // Clothing Recommendation
     private String recommendClothes(double temp, double humidity, double rain, double wind) {
 
         StringBuilder rec = new StringBuilder();
@@ -99,7 +98,6 @@ public class WeatherAI_GUI extends JFrame {
         return rec.toString();
     }
 
-    // When user clicks the button
     private void fetchWeather(ActionEvent event) {
 
         String city = cityField.getText().trim();
@@ -111,7 +109,6 @@ public class WeatherAI_GUI extends JFrame {
         try {
             outputArea.setText("Fetching weather...\n");
 
-            // ----------- CURRENT WEATHER (FREE API) ----------
             JsonObject current = getCurrentWeather(city);
 
             if (current == null || !current.has("main")) {
@@ -123,7 +120,6 @@ public class WeatherAI_GUI extends JFrame {
             double humidity = current.getAsJsonObject("main").get("humidity").getAsDouble();
             double wind = current.getAsJsonObject("wind").get("speed").getAsDouble() * 3.6;
 
-            // ----------- FORECAST (FREE API) ----------
             JsonObject forecast = getForecast(city);
             JsonArray list = forecast.getAsJsonArray("list");
 
@@ -135,7 +131,6 @@ public class WeatherAI_GUI extends JFrame {
                 }
             }
 
-            // ----------- DISPLAY ----------
             outputArea.setText(
                     "City: " + city + "\n" +
                             "Temperature: " + temp + "°C\n" +
@@ -148,10 +143,10 @@ public class WeatherAI_GUI extends JFrame {
 
         } catch (Exception e) {
             outputArea.setText("Error: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
+    // ------------------- PUBLIC MAIN (Required) -------------------
     public static void main(String[] args) {
         new WeatherAI_GUI();
     }
