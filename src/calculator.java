@@ -41,7 +41,7 @@ public class calculator {
                 result=a/b;
                 System.out.println("Result="+result);}
                 else{
-                    System.out.println("enter apositive b value")
+                    System.out.println("enter a positive b value");
                 }
                 break;
             case 5:
